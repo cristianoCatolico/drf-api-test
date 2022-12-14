@@ -1,17 +1,15 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
 from .views import (
-     ProductDestroyView, 
-     ProductUpdateView,
-     ProducDetailView,
-     ProducCreateView,
+     ProductViewSet,
      pais
 )
 
+router = DefaultRouter(trailing_slash=False)
+router.register('products', ProductViewSet)
 
 urlpatterns = [
     path('pais/', pais),
-    path('products/<int:pk>/delete', ProductDestroyView.as_view()),
-    path('products/<int:pk>/update', ProductUpdateView.as_view()),
-    path('products/<int:pk>', ProducDetailView.as_view()),
-    path('products/create', ProducCreateView.as_view())   
 ]
+
+urlpatterns += router.urls

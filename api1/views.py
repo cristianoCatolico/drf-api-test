@@ -9,7 +9,7 @@ from .serializers import PaisSerializador, ProductSerializer
 from rest_framework.generics import DestroyAPIView, UpdateAPIView, RetrieveAPIView, CreateAPIView
 
 from rest_framework import authentication, permissions
-
+from rest_framework import viewsets
 @api_view(['GET', 'POST','PUT'])
 def pais(request):
     print(request)
@@ -27,18 +27,6 @@ def pais(request):
     elif request.method == 'PUT': # user posting data
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-class ProductDestroyView(DestroyAPIView):
+class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-
-class ProductUpdateView(UpdateAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-
-class ProducDetailView(RetrieveAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-
-class ProducCreateView(CreateAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
+    serializer_class= ProductSerializer
