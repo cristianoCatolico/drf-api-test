@@ -4,10 +4,13 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Pais
-from .serializers import PaisSerializador
+from .models import Pais, Product
+from .serializers import PaisSerializador, ProductSerializer
+from rest_framework.generics import DestroyAPIView, UpdateAPIView, RetrieveAPIView, CreateAPIView
 
-@api_view(['GET', 'POST'])
+from rest_framework import authentication, permissions
+
+@api_view(['GET', 'POST','PUT'])
 def pais(request):
     print(request)
     if request.method == 'GET': 
@@ -23,4 +26,19 @@ def pais(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'PUT': # user posting data
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
+
+class ProductDestroyView(DestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+class ProductUpdateView(UpdateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+class ProducDetailView(RetrieveAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+class ProducCreateView(CreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
