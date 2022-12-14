@@ -6,6 +6,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Pais, Product
 from .serializers import PaisSerializador, ProductSerializer
+from rest_framework.views import APIView
 from rest_framework.generics import DestroyAPIView, UpdateAPIView, RetrieveAPIView, CreateAPIView
 
 from rest_framework import authentication, permissions
@@ -27,6 +28,14 @@ def pais(request):
     elif request.method == 'PUT': # user posting data
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+class BaseManageView(APIView):
+    def dispatch(self, request, *args, **kwargs):
+        if not hasattr(self, 'VIEWS_BY_METHOD'):
+            raise Exception("La variable debe ser definida en el ManageView")
+        if request.method in self.VIEWS_BY_METHOD:
+            return self.VIEWS_BY_METHOD[request.method]()(request, *args, **kwargs)        
+        
+        return Response(status=405)
 class ProductDestroyView(DestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
@@ -42,3 +51,10 @@ class ProducDetailView(RetrieveAPIView):
 class ProducCreateView(CreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+
+class ProductManageView(BaseManageView):
+    VIEWS_BY_METHOD = {
+        'DELETE': ProductDestroyView.as_view,
+        'GET': ProducDetailView.as_view,
+        'PUT': ProductUpdateView.as_view,        
+    }
